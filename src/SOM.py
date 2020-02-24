@@ -1,4 +1,4 @@
-from .Grid import Grid
+from Grid import Grid
 
 
 class SOM:
@@ -16,3 +16,4 @@ class SOM:
             print(f'epochs: {epoch}/{self.__epochs}')
             for data_point in data:
                 self.__grid.update(data_point, sigma, learning_rate)
+        print('All epochs are done                         ')

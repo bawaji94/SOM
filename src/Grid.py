@@ -17,6 +17,10 @@ def influence(point1, point2, sigma):
     return exp(-distance(point1, point2) / sigma ** 2)
 
 
+def get_range(point, sigma, end_point):
+    return max(0, point - int(sigma)), min(end_point, point + int(sigma) + 1)
+
+
 class Grid:
     def __init__(self, x, y, dimensions):
         self.__x = x
@@ -25,15 +29,15 @@ class Grid:
 
     def update(self, data_point, sigma, learning_rate):
         bmu = self.__find_bmu(data_point)
-        for i in range(self.__x):
-            for j in range(self.__y):
+        for i in range(*get_range(bmu[0], sigma, self.__x)):
+            for j in range(*get_range(bmu[1], sigma, self.__y)):
                 current_point = (i, j)
                 if distance(current_point, bmu) > sigma:
                     continue
 
-                change = learning_rate * influence(current_point, bmu, sigma) * data_point - self.__grid[i][j]
+                delta = learning_rate * influence(current_point, bmu, sigma) * (data_point - self.__grid[i][j])
 
-                self.__grid[i][j] = self.__grid[i][j] + change
+                self.__grid[i][j] = self.__grid[i][j] + delta
 
     def __find_bmu(self, data_point):
         minimum_distance = max_number
@@ -50,6 +54,9 @@ class Grid:
 
     def plot(self):
         plt.figure()
-        plt.imshow(self.__grid, origin='bottom')
+        plt.imshow(self.__grid.astype(int), origin='bottom')
         plt.title(f'Grid size: {self.__x}x{self.__y}')
         plt.show()
+
+    def print(self):
+        print(self.__grid)
